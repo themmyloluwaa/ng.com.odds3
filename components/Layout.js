@@ -10,7 +10,7 @@ const Layout = props => {
         />
         <meta httpEquiv="content-type" content="text/html;charset=UTF-8" />
         <meta charSet="utf-8" />
-        <link rel="icon" href="/img/logo.png" type="image/png" sizes="16x16" />
+        <link rel="icon" href="/fav.png" type="image/png" sizes="16x16" />
         <title>{props.title}</title>
       </Head>
 

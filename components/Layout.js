@@ -22,11 +22,17 @@ const Layout = props => {
         </p>
       </footer> */}
 
-      <style jsx>
+      <style jsx global>
         {`
-          footer {
-            font-size: 3rem;
-          }
+          // html {
+          //   font-size: 62.5% !important;
+          // }
+
+          // @media only screen and (max-width: 600px) {
+          //   html {
+          //     font-size: 31.25% !important;
+          //   }
+          // }
         `}
       </style>
     </>

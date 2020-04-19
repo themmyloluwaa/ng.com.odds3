@@ -1,0 +1,28 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  box-sizing: border-box;
+  font-family: "Lato", sans-serif;
+  padding: 3rem 3rem 0 3rem;
+}
+
+.btns {
+  font-size: 3rem;
+  @apply bg-red-500 #{!important};
+}
+
+@media only screen and (max-width: 600px) {
+  html {
+    font-size: 31.25%;
+  }
+}

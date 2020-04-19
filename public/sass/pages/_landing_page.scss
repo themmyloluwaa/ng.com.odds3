@@ -1,0 +1,72 @@
+.header {
+    height: 95vh;
+    // background: $color-secondary;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+    background-image: linear-gradient(to right bottom, rgba($color-secondary, 0.8), rgba($color-secondary, 0.8)), url('/img/hero-small.jpg');
+    background-size: cover;
+    background-position: top;
+}
+
+
+
+
+
+.logo-box {
+    margin-top: -6.5rem;
+    padding-top: .8rem;
+}
+
+.logo {
+    height: 15rem;
+}
+
+.nav-child {
+    text-transform: uppercase;
+
+    &:link,
+    &:visited {
+        text-transform: uppercase;
+    }
+
+    &:hover {
+        color: $color-primary;
+        cursor: pointer;
+    }
+}
+
+.margin-t {
+
+    transform: translateY(80%);
+}
+
+.odds3 {
+    color: $color-primary;
+}
+
+.fs-3 {
+    font-size: 1.9rem;
+}
+
+.section {
+    transform: translateY(-50%) translateX(-50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: $color-light;
+}
+
+
+.feature-about {
+    padding: 25rem 0 35rem 0;
+    background-color: $color-grey-light-1;
+    margin-top: -20vh;
+    color: $color-dark;
+
+}
+
+.footer {
+    background-image: linear-gradient(to right bottom, rgba($color-secondary, 0.8), rgba($color-secondary, 0.8));
+    color: $color-light;
+
+}

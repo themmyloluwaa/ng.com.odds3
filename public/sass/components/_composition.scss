@@ -1,0 +1,40 @@
+.composition {
+    position: relative;
+
+    &_photo {
+        width: 50%;
+        position: absolute;
+        top: -18rem;
+        // margin-top: -10rem;
+        border-radius: 1rem;
+        transition: all .3s;
+
+        animation: moveInRight 1s ease-in-out;
+
+        &:hover {
+            box-shadow: 0 .5rem 1.5rem rgba(#000000, .5);
+            transform: translateY(-.7rem)
+        }
+
+        @media only screen and (max-width: 600px) {
+            & {
+                top: 0;
+                width: 70%;
+            }
+        }
+    }
+
+
+}
+
+.img-container {
+    cursor: pointer;
+}
+
+.store-icon {
+    transition: all .5s ease-in-out;
+
+    &:hover {
+        transform: translateY(-.5rem) scale(1.1);
+    }
+}

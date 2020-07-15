@@ -27,7 +27,7 @@ const LandingPage = () => {
               Small Games, Bigger Profits
             </span>
           </h1>
-          <a href="#download" className="btn btn-animated">
+          <a href="#download" className="bt btn-animated">
             Download
           </a>
         </section>
@@ -62,7 +62,7 @@ const LandingPage = () => {
               >
                 <a
                   className="ml-10 mr-5"
-                  href="https://www.dropbox.com/s/t9yed9ij5ej49h5/Odds%203.apk?dl=1"
+                  href="https://play.google.com/store/apps/details?id=ng.com.odds_3"
                 >
                   {" "}
                   <img

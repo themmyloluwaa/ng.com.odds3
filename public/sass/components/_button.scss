@@ -1,4 +1,4 @@
-.btn {
+.bt {
 
     &:link,
     &:visited {
@@ -15,6 +15,7 @@
     &:hover {
         transform: translateY(-0.3rem);
         box-shadow: 0 1.5rem 2rem rgba(#000000, 0.2);
+        text-decoration: none;
 
         &::after {
             transform: scaleY(1.6) scaleX(1.5);

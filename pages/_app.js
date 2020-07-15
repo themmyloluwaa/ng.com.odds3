@@ -2,6 +2,7 @@ import App from "next/app";
 // import NProgress from "nprogress";
 // import Router from "next/router";
 
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../public/sass/main.scss";
 // import "nprogress/nprogress.css";
 

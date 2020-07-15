@@ -1,23 +1,83 @@
 import { useState } from "react";
 import { Form, Container, Row, Col, Image, Button } from "react-bootstrap";
 import Layout from "../../components/Layout";
+import { handleLogin } from "../../lib/utils";
+import Alert from "../../components/Alert";
+import cookie from "js-cookie";
+import { useRouter } from "next/router";
 
 const Login = props => {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [response, setResponse] = useState({});
+  const [show, setShow] = useState(false);
   const [validated, setValidated] = useState(false);
 
-  const handleSubmit = event => {
+  const handleSubmit = async e => {
+    e.preventDefault();
+    let isValidated = true;
+    if (username.length === 0 || password.length === 0 || code.length === 0) {
+      isValidated = handleValidation(e);
+    }
+
+    if (isValidated) {
+      setLoading(true);
+
+      const data = {
+        username,
+        password,
+        code
+      };
+      const auth = await handleLogin(data);
+
+      console.log(auth);
+
+      if (Object.entries(auth).length === 0) {
+        setResponse({
+          message: {
+            header: "ERROR",
+            body: "Failed to login. Incorrect credentials provided"
+          },
+          variant: "danger"
+        });
+        setShow(true);
+
+        return setLoading(false);
+      }
+
+      cookie.set("token", auth.token);
+      setUsername("");
+      setPassword("");
+      setCode("");
+
+      setResponse({
+        message: {
+          header: "SUCCESSFUL",
+          body: "Logged in successfully"
+        },
+        variant: "success"
+      });
+      setShow(true);
+      setLoading(false);
+
+      router.push("/admin/home");
+    }
+  };
+
+  const handleValidation = event => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
 
+    event.preventDefault();
+
     setValidated(true);
+    return validated;
   };
   return (
     <Layout title="Login:Odds-3">
@@ -32,17 +92,29 @@ const Login = props => {
       >
         <Form
           noValidate
+          method="post"
           validated={validated}
-          onSubmit={handleSubmit}
+          onSubmit={async e => await handleSubmit(e)}
           style={{
             width: "300px",
-            height: "400px",
+            maxHeight: "500px",
             padding: 20,
             backgroundColor: "white",
             margin: "0 auto"
           }}
           className="border"
         >
+          {show === true && (
+            <Form.Row>
+              <Form.Group as={Col} controlId="error">
+                <Alert
+                  data={[show, setShow]}
+                  message={response.message}
+                  variant={response.variant}
+                />
+              </Form.Group>
+            </Form.Row>
+          )}
           <Form.Row>
             <Form.Group as={Col} controlId="logo">
               <Image
@@ -87,7 +159,7 @@ const Login = props => {
               style={{ fontSize: 16 }}
             />
           </Form.Group>
-          <Form.Row className="text-center">
+          <Form.Row className="text-center pb-5">
             <Form.Group as={Col}>
               <Button
                 size="lg"
@@ -103,6 +175,7 @@ const Login = props => {
           </Form.Row>
         </Form>
       </Container>
+
       <style jsx global>
         {`
           body {

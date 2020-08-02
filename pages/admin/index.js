@@ -164,7 +164,10 @@ const Login = props => {
               <Button
                 size="lg"
                 style={{
-                  backgroundColor: "#090752"
+                  backgroundColor: "#090752",
+                  minHeight: "30px",
+                  minWidth: "30px",
+                  fontSize: "16px"
                 }}
                 className="px-5 py-3"
                 type="submit"

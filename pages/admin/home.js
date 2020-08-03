@@ -44,17 +44,13 @@ const Home = () => {
           style={{
             minWidth: "80%",
             minHeight: "30vh",
-            maxHeight: "70vh",
-            overflow: "auto"
+            maxHeight: "70vh"
+            // overflow: "auto"
             // color: "#fff"
           }}
           // bg="primary"
         >
-          <Tabs
-            id="controlled-tab-example"
-            activeKey={key}
-            onSelect={k => setKey(k)}
-          >
+          <Tabs activeKey={key} onSelect={k => setKey(k)}>
             <Tab eventKey="Prediction" title="Prediction">
               <TabBody />
             </Tab>

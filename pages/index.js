@@ -117,8 +117,8 @@ const LandingPage = () => {
       </footer>
       {show === true ? (
         <>
-          <div className="modal-overlay"></div>
-          <div className="modal mx-auto px-10">
+          <div className="modaling-overlay"></div>
+          <div className="modaling mx-auto px-10">
             <h3 className="heading-tertiary mt-10 mb-12 border-b-2 pb-3">
               Coming Soon
             </h3>

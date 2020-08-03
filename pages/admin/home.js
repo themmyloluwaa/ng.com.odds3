@@ -45,10 +45,10 @@ const Home = () => {
             minWidth: "80%",
             minHeight: "30vh",
             maxHeight: "70vh",
-            overflow: "auto",
-            color: "#fff"
+            overflow: "auto"
+            // color: "#fff"
           }}
-          bg="primary"
+          // bg="primary"
         >
           <Tabs
             id="controlled-tab-example"

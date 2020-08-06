@@ -15,7 +15,7 @@ const Home = () => {
   const [key, setKey] = useState("Prediction");
   return (
     <>
-      <Navbar bg="primary" expand="lg">
+      <Navbar bg="primary" expand="lg" className="mb-40">
         <Navbar.Brand href="#home">
           <img
             src="/img/logo.png"
@@ -37,19 +37,10 @@ const Home = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          width: "80vw"
+          maxWidth: "80vw"
         }}
       >
-        <Card
-          style={{
-            minWidth: "80%",
-            minHeight: "30vh",
-            maxHeight: "70vh"
-            // overflow: "auto"
-            // color: "#fff"
-          }}
-          // bg="primary"
-        >
+        <Card>
           <Tabs activeKey={key} onSelect={k => setKey(k)}>
             <Tab eventKey="Prediction" title="Prediction">
               <TabBody />
@@ -63,6 +54,7 @@ const Home = () => {
           </Tabs>
         </Card>
       </Container>
+
       <style jsx global>
         {`
           body {

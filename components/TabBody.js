@@ -6,10 +6,13 @@ import PredictionModal from "./PredictionModal";
 const TabBody = data => {
   return (
     <>
-      <PredictionModal />
+      <Row>
+        <Col>
+          <PredictionModal />
+        </Col>
+      </Row>
 
-      <TabContent className="my-10">
-        <Row></Row>
+      <TabContent className="my-10 ">
         <DisplayContent />
         <DisplayContent />
         <DisplayContent />

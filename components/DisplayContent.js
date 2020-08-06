@@ -1,9 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
 
-const DisplayContent = () => {
+const renderIcon = (icon = "pause") => {
+  if (icon === "pause") {
+    return (
+      <div
+        style={{
+          backgroundColor: "#FFE03F",
+          borderRadius: "50%",
+          width: "22%",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex"
+        }}
+      >
+        <p className="pl-3 py-2 text-white">&#9612;&#9612;</p>
+      </div>
+    );
+  } else if (icon === "win") {
+    return (
+      <div
+        style={{
+          backgroundColor: "green",
+          borderRadius: "50%",
+          width: "22%",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex"
+        }}
+      >
+        <p className="py-2 text-white">&#10004;</p>
+      </div>
+    );
+  } else {
+    return (
+      <div
+        style={{
+          backgroundColor: "red",
+          borderRadius: "50%",
+          width: "22%",
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex"
+        }}
+      >
+        <p className="py-2 text-white">&#10005;</p>
+      </div>
+    );
+  }
+};
+
+const DisplayContent = props => {
+  const [icon, setIcon] = useState("pause");
   return (
-    <Row className="px-5 py-3 my-5 border-bottom">
+    <Row className="px-5 py-3 my-5">
       <Col sm="12">
         <img
           src="/img/logo-2.png"
@@ -38,20 +88,7 @@ const DisplayContent = () => {
           <Col>
             <p>14:00</p>
           </Col>
-          <Col>
-            <div
-              style={{
-                backgroundColor: "#FFE03F",
-                borderRadius: "50%",
-                width: "22%",
-                justifyContent: "center",
-                alignItems: "center",
-                display: "flex"
-              }}
-            >
-              <p className="pl-3 py-2 text-white">&#9612;&#9612;</p>
-            </div>
-          </Col>
+          <Col>{renderIcon(icon)}</Col>
         </Row>
       </Col>
       <Col sm="12">
@@ -64,7 +101,7 @@ const DisplayContent = () => {
           </Col>
         </Row>
       </Col>
-      <Col sm="12">
+      <Col sm="12" className="border-bottom">
         <Row className="mx-auto">
           <Col>
             <p>Tip:Over 2.5</p>

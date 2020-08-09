@@ -6,14 +6,56 @@ import {
   Navbar,
   Nav,
   Tabs,
-  Tab
+  Tab,
+  TabContent
 } from "react-bootstrap";
-import { useState } from "react";
-import TabBody from "../../components/TabBody";
+import { useState, useMemo } from "react";
+import DisplayContent from "../../components/DisplayContent";
 import PredictionModal from "../../components/PredictionModal";
+import { createPridiction } from "../../lib/predictionUtils";
+import AlertComponent from "../../components/Alert";
 
-const Home = () => {
+const Home = props => {
   const [key, setKey] = useState("Prediction");
+  const [predictions, setPredictions] = useState(props.predictions || []);
+  const [alertResponse, setAlertResponse] = useState({});
+  const [alertShow, setAlertShow] = useState(false);
+
+  const memoizedPrediction = useMemo(() => {
+    return (
+      predictions.length > 0 &&
+      predictions.map((prediction, i) => {
+        return <DisplayContent data={prediction} key={i} />;
+      })
+    );
+  }, [predictions]);
+
+  const handleCreate = async data => {
+    const createdData = await createPridiction(data);
+    console.log(createdData);
+
+    if (Object.entries(createdData).length === 0) {
+      setAlertResponse({
+        message: {
+          header: "ERROR",
+          body:
+            "Failed to create data, did you select a date, time, or the league name"
+        },
+        variant: "danger"
+      });
+      setAlertShow(true);
+      return;
+    }
+    setAlertResponse({
+      message: {
+        header: "SUCCESS",
+        body: "Created successfully"
+      },
+      variant: "success"
+    });
+    setAlertShow(true);
+    setPredictions([createdData, ...predictions]);
+  };
   return (
     <>
       <Navbar bg="primary" expand="lg" className="mb-40">
@@ -37,7 +79,6 @@ const Home = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
           maxWidth: "80vw"
         }}
       >
@@ -46,31 +87,28 @@ const Home = () => {
             <Tab eventKey="Prediction" title="Prediction">
               <Row>
                 <Col>
-                  <PredictionModal
-                    defaultData={{
-                      date: "AUG 13",
-                      home: "kk",
-                      home_goal: "?",
-                      icon: "pause",
-                      logo:
-                        "https://media.api-sports.io/football/leagues/78.png",
-                      league: "Germany Bundesliga 1",
-                      odd: "9",
-                      opponent: "kkk",
-                      opponent_goal: "?",
-                      time: "9:51",
-                      tips: "kk"
-                    }}
-                  />
+                  <PredictionModal callBack={handleCreate} isEdit={false} />
                 </Col>
               </Row>
-              <TabBody />
+              {alertShow && (
+                <Row>
+                  <Col>
+                    <AlertComponent
+                      data={[alertShow, setAlertShow]}
+                      message={alertResponse.message}
+                      variant={alertResponse.variant}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {/* <DisplayContent  /> */}
+              <TabContent className="my-10 ">{memoizedPrediction}</TabContent>
             </Tab>
             <Tab eventKey="Result" title="Result">
-              <TabBody />
+              <DisplayContent data={props.predictions} />
             </Tab>
             {/* <Tab eventKey="Code" title="Code">
-              <TabBody />
+              <DisplayContent />
             </Tab> */}
           </Tabs>
         </Card>
@@ -87,4 +125,28 @@ const Home = () => {
   );
 };
 
+export async function getStaticProps(context) {
+  let predictions;
+
+  try {
+    predictions = await fetch(`${process.env.DEV_API}/prediction`, {
+      method: "get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+
+    console.log(predictions);
+
+    predictions = predictions.status === 200 ? await predictions.json() : [];
+  } catch (e) {
+    console.log(e);
+  }
+  return {
+    props: {
+      predictions
+    } // will be passed to the page component as props
+  };
+}
 export default Home;

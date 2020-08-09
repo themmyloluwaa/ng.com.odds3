@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
+import PredictionModal from "./PredictionModal";
 
-const renderIcon = (icon = "pause") => {
-  if (icon === "pause") {
+const renderIcon = (icon = "PAUSE") => {
+  if (icon === "PAUSE") {
     return (
       <div
         style={{
@@ -17,7 +18,7 @@ const renderIcon = (icon = "pause") => {
         <p className="pl-3 py-2 text-white">&#9612;&#9612;</p>
       </div>
     );
-  } else if (icon === "win") {
+  } else if (icon === "WIN") {
     return (
       <div
         style={{
@@ -51,12 +52,13 @@ const renderIcon = (icon = "pause") => {
 };
 
 const DisplayContent = props => {
-  const [icon, setIcon] = useState("pause");
+  const { data = {} } = props;
+  const [icon, setIcon] = useState("PAUSE");
   return (
-    <Row className="px-5 py-3 my-5">
+    <Row className="px-5 py-3 my-5" key={data.id}>
       <Col sm="12">
         <img
-          src="/img/logo-2.png"
+          src={data?.logo ?? ""}
           className="mx-auto my-3"
           width="50"
           height="50"
@@ -66,48 +68,58 @@ const DisplayContent = props => {
       <Col sm="12">
         <Row className="mx-auto">
           <Col>
-            <h3 className="font-weight-bolder">English Premier Leauge</h3>
+            <h3 className="font-weight-bolder">{data?.league ?? ""}</h3>
           </Col>
           <Col>
-            <p>04 Aug</p>
-          </Col>
-        </Row>
-      </Col>
-      <Col sm="12">
-        <Row className="mx-auto">
-          <Col>
-            <p>Arsenal FC</p>
-          </Col>
-          <Col>
-            <p>?</p>
+            <p>{data?.date ?? ""}</p>
           </Col>
         </Row>
       </Col>
       <Col sm="12">
         <Row className="mx-auto">
           <Col>
-            <p>14:00</p>
+            <p>{data?.home ?? ""}</p>
           </Col>
-          <Col>{renderIcon(icon)}</Col>
+          <Col>
+            <p>{data?.home_goal ?? ""}</p>
+          </Col>
         </Row>
       </Col>
       <Col sm="12">
         <Row className="mx-auto">
           <Col>
-            <p>Chelsea FC</p>
+            <p>{data?.time ?? ""}</p>
+          </Col>
+          <Col>{renderIcon(data?.icon ?? icon)}</Col>
+        </Row>
+      </Col>
+      <Col sm="12">
+        <Row className="mx-auto">
+          <Col>
+            <p>{data?.opponent ?? ""}</p>
           </Col>
           <Col>
-            <p>?</p>
+            <p>{data?.opponent_goal ?? ""}</p>
           </Col>
         </Row>
       </Col>
-      <Col sm="12" className="border-bottom">
+      <Col sm="12">
         <Row className="mx-auto">
           <Col>
-            <p>Tip:Over 2.5</p>
+            <p>Tip: {data?.tips ?? ""}</p>
           </Col>
           <Col>
-            <p>Odds:1.3</p>
+            <p>Odds: {data?.odd ?? ""}</p>
+          </Col>
+        </Row>
+      </Col>
+      <Col sm="12" className="border-bottom my-3 py-3">
+        <Row className="mx-auto">
+          <Col>
+            <PredictionModal defaultData={data} isEdit={true} />
+          </Col>
+          <Col>
+            <button className="btn btn-danger">Delete</button>
           </Col>
         </Row>
       </Col>

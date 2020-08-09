@@ -25,12 +25,12 @@ const MONTHS = [
 ];
 
 const PredictionModal = props => {
+  const { defaultData = {}, isEdit = false } = props;
   const [alertShow, setAlertShow] = useState(false);
   const [show, setShow] = useState(false);
   const [leagueData, setLeagueData] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState({});
   const [alertResponse, setAlertResponse] = useState({});
-  const { defaultData = {} } = props;
 
   const handleClose = () => setShow(false);
   const handleShow = async () => {
@@ -40,13 +40,12 @@ const PredictionModal = props => {
     setShow(true);
   };
 
-  const [dataItems, setDataItems] = useState({});
+  const [dataItems, setDataItems] = useState(defaultData);
 
   const selectItems = useMemo(() => {
     return (
       leagueData.length > 0 &&
       leagueData.map((league, i) => {
-        console.log("im rendering");
         return (
           <option key={i} value={JSON.stringify(league)}>
             {`${league.country}-${league.name}`}
@@ -79,12 +78,12 @@ const PredictionModal = props => {
 
   const [validated, setValidated] = useState(false);
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     const form = event.currentTarget;
     event.preventDefault();
     if (
       form.checkValidity() === false ||
-      !dataItems.hasOwnProperty("name") ||
+      !dataItems.hasOwnProperty("league") ||
       !dataItems.hasOwnProperty("date") ||
       !dataItems.hasOwnProperty("logo") ||
       !dataItems.hasOwnProperty("time")
@@ -93,46 +92,42 @@ const PredictionModal = props => {
       setAlertResponse({
         message: {
           header: "ERROR",
-          body:
-            "Failed to create data, did you select a date, time, or the league name"
+          body: `Failed to ${
+            isEdit ? "update" : "create"
+          } data, did you select a date, time, or the league name`
         },
         variant: "danger"
       });
       setAlertShow(true);
-      console.log(dataItems);
     }
     setValidated(true);
 
     if (
       form.checkValidity() &&
-      dataItems.hasOwnProperty("name") &&
+      dataItems.hasOwnProperty("league") &&
       dataItems.hasOwnProperty("date") &&
       dataItems.hasOwnProperty("logo") &&
       dataItems.hasOwnProperty("time")
     ) {
-      console.log(dataItems);
-
-      console.log(
-        dataItems.hasOwnProperty("name"),
-        dataItems.hasOwnProperty("date"),
-        dataItems.hasOwnProperty("time")
-      );
+      await props.callBack(dataItems);
+      handleClose();
     }
-    return;
   };
 
   return (
     <>
       <button
-        className="btn btn-primary  mr-10 float-right"
+        className={`btn btn-${
+          isEdit ? "warning" : "primary"
+        }  mr-10 float-right text-white`}
         onClick={async () => handleShow()}
       >
-        New Prediction
+        {!isEdit ? "New Prediction" : "Edit Prediction"}
       </button>
       <Modal show={show} onHide={setShow}>
         <Form
           method="post"
-          onSubmit={handleSubmit}
+          onSubmit={async e => handleSubmit(e)}
           noValidate
           validated={validated}
         >
@@ -147,7 +142,7 @@ const PredictionModal = props => {
               </Form.Row>
             ) : (
               <Modal.Title id="example-modal-sizes-title-lg">
-                Create A New Prediction
+                {isEdit ? "Update this prediction" : "Create a new prediction"}
               </Modal.Title>
             )}
           </Modal.Header>
@@ -165,11 +160,11 @@ const PredictionModal = props => {
 
                     setDataItems({
                       ...dataItems,
-                      name: `${leagueItem.country} ${leagueItem.name}`,
+                      league: `${leagueItem.country} ${leagueItem.name}`,
                       logo: leagueItem.logo,
                       opponent_goal: "?",
                       home_goal: "?",
-                      icon: "pause"
+                      icon: "PAUSE"
                     });
                   }}
                 >
@@ -232,6 +227,7 @@ const PredictionModal = props => {
                 <Form.Control
                   type="number"
                   name="odd"
+                  step=".01"
                   defaultValue={defaultData?.odd ?? ""}
                   onChange={handleChange}
                   required

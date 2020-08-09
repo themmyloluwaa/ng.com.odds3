@@ -1,23 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import DateTimePicker from "react-widgets/lib/DateTimePicker";
+import { handleLeagueFetch } from "../lib/utils";
+import AlertComponent from "./Alert";
 
 Moment.locale("en");
 momentLocalizer();
+const MONTHS = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JLY",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC"
+];
 
-const PredictionModal = () => {
+const PredictionModal = props => {
+  const [alertShow, setAlertShow] = useState(false);
   const [show, setShow] = useState(false);
+  const [leagueData, setLeagueData] = useState([]);
+  const [selectedLeague, setSelectedLeague] = useState({});
+  const [alertResponse, setAlertResponse] = useState({});
+  const { defaultData = {} } = props;
+
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = async () => {
+    const response = await handleLeagueFetch();
+
+    setLeagueData(response.api.leagues);
+    setShow(true);
+  };
 
   const [dataItems, setDataItems] = useState({});
 
-  const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2014-08-18T21:11:54")
-  );
+  const selectItems = useMemo(() => {
+    return (
+      leagueData.length > 0 &&
+      leagueData.map((league, i) => {
+        console.log("im rendering");
+        return (
+          <option key={i} value={JSON.stringify(league)}>
+            {`${league.country}-${league.name}`}
+          </option>
+        );
+      })
+    );
+  }, [leagueData]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -26,81 +63,191 @@ const PredictionModal = () => {
       ...dataItems,
       [name]: value
     });
-
-    console.log(dataItems);
   };
 
   const handleDateChange = date => {
-    console.log(date);
-    setSelectedDate(date);
+    const newDate = new Date(date);
+
+    const month = MONTHS[newDate.getMonth()];
+
+    setDataItems({
+      ...dataItems,
+      date: `${month} ${newDate.getDate()}`,
+      time: `${newDate.getHours()}:${newDate.getMinutes()}`
+    });
   };
-  const [value, onChange] = useState(new Date());
+
+  const [validated, setValidated] = useState(false);
+
+  const handleSubmit = event => {
+    const form = event.currentTarget;
+    event.preventDefault();
+    if (
+      form.checkValidity() === false ||
+      !dataItems.hasOwnProperty("name") ||
+      !dataItems.hasOwnProperty("date") ||
+      !dataItems.hasOwnProperty("logo") ||
+      !dataItems.hasOwnProperty("time")
+    ) {
+      event.stopPropagation();
+      setAlertResponse({
+        message: {
+          header: "ERROR",
+          body:
+            "Failed to create data, did you select a date, time, or the league name"
+        },
+        variant: "danger"
+      });
+      setAlertShow(true);
+      console.log(dataItems);
+    }
+    setValidated(true);
+
+    if (
+      form.checkValidity() &&
+      dataItems.hasOwnProperty("name") &&
+      dataItems.hasOwnProperty("date") &&
+      dataItems.hasOwnProperty("logo") &&
+      dataItems.hasOwnProperty("time")
+    ) {
+      console.log(dataItems);
+
+      console.log(
+        dataItems.hasOwnProperty("name"),
+        dataItems.hasOwnProperty("date"),
+        dataItems.hasOwnProperty("time")
+      );
+    }
+    return;
+  };
+
   return (
     <>
       <button
         className="btn btn-primary  mr-10 float-right"
-        onClick={handleShow}
+        onClick={async () => handleShow()}
       >
         New Prediction
       </button>
       <Modal show={show} onHide={setShow}>
-        <Form>
+        <Form
+          method="post"
+          onSubmit={handleSubmit}
+          noValidate
+          validated={validated}
+        >
           <Modal.Header closeButton>
-            <Modal.Title id="example-modal-sizes-title-lg">
-              Create A New Prediction
-            </Modal.Title>
+            {alertShow ? (
+              <Form.Row>
+                <AlertComponent
+                  data={[alertShow, setAlertShow]}
+                  message={alertResponse.message}
+                  variant={alertResponse.variant}
+                />
+              </Form.Row>
+            ) : (
+              <Modal.Title id="example-modal-sizes-title-lg">
+                Create A New Prediction
+              </Modal.Title>
+            )}
           </Modal.Header>
           <Modal.Body>
             <fieldset>
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">League Name</Form.Label>
+                <Form.Label>League Name</Form.Label>
                 <Form.Control
-                  name="league"
-                  type="text"
-                  onChange={e => handleChange(e)}
+                  as="select"
+                  defaultValue={defaultData?.league ?? ""}
                   required
-                />
+                  onChange={e => {
+                    const leagueItem = JSON.parse(e.target.value);
+                    setSelectedLeague(leagueItem);
+
+                    setDataItems({
+                      ...dataItems,
+                      name: `${leagueItem.country} ${leagueItem.name}`,
+                      logo: leagueItem.logo,
+                      opponent_goal: "?",
+                      home_goal: "?",
+                      icon: "pause"
+                    });
+                  }}
+                >
+                  <option>...</option>
+                  {selectItems}
+                </Form.Control>
+                <Form.Text>
+                  Click to drop down to see all available leagues in the world
+                </Form.Text>
               </Form.Group>
+
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">
+                <Form.Label>
                   Date and Time
                   {/* <DateTimePicker onChange={onChange} value={value} /> */}
-                  <DateTimePicker name="date" onChange={handleDateChange} />
+                  <DateTimePicker
+                    name="date"
+                    defaultValue={
+                      defaultData?.date &&
+                      defaultData?.time &&
+                      new Date(`${defaultData.date} ${defaultData.time}`)
+                    }
+                    min={new Date()}
+                    onChange={handleDateChange}
+                  />
                 </Form.Label>
               </Form.Group>
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">Home</Form.Label>
+                <Form.Label>Home</Form.Label>
                 <Form.Control
                   type="text"
                   name="home"
+                  defaultValue={defaultData?.home ?? ""}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">Away</Form.Label>
+                <Form.Label>Away</Form.Label>
                 <Form.Control
                   type="text"
                   name="opponent"
+                  defaultValue={defaultData?.opponent ?? ""}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">Tip</Form.Label>
+                <Form.Label>Tip</Form.Label>
                 <Form.Control
                   type="text"
                   name="tips"
+                  defaultValue={defaultData?.tips ?? ""}
                   onChange={handleChange}
                   required
                 />
               </Form.Group>
               <Form.Group>
-                <Form.Label htmlFor="disabledTextInput">odd</Form.Label>
+                <Form.Label>odd</Form.Label>
                 <Form.Control
                   type="number"
                   name="odd"
+                  defaultValue={defaultData?.odd ?? ""}
                   onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>League Logo</Form.Label>
+
+                <img
+                  src={
+                    defaultData.hasOwnProperty("logo") &&
+                    !selectedLeague.hasOwnProperty("logo")
+                      ? defaultData.logo
+                      : selectedLeague.logo
+                  }
+                  width="100"
                 />
               </Form.Group>
             </fieldset>

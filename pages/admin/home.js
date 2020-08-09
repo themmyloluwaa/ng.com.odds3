@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { useState } from "react";
 import TabBody from "../../components/TabBody";
+import PredictionModal from "../../components/PredictionModal";
 
 const Home = () => {
   const [key, setKey] = useState("Prediction");
@@ -43,14 +44,34 @@ const Home = () => {
         <Card>
           <Tabs activeKey={key} onSelect={k => setKey(k)}>
             <Tab eventKey="Prediction" title="Prediction">
+              <Row>
+                <Col>
+                  <PredictionModal
+                    defaultData={{
+                      date: "AUG 13",
+                      home: "kk",
+                      home_goal: "?",
+                      icon: "pause",
+                      logo:
+                        "https://media.api-sports.io/football/leagues/78.png",
+                      league: "Germany Bundesliga 1",
+                      odd: "9",
+                      opponent: "kkk",
+                      opponent_goal: "?",
+                      time: "9:51",
+                      tips: "kk"
+                    }}
+                  />
+                </Col>
+              </Row>
               <TabBody />
             </Tab>
             <Tab eventKey="Result" title="Result">
               <TabBody />
             </Tab>
-            <Tab eventKey="Code" title="Code">
+            {/* <Tab eventKey="Code" title="Code">
               <TabBody />
-            </Tab>
+            </Tab> */}
           </Tabs>
         </Card>
       </Container>

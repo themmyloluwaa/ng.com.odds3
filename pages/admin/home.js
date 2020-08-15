@@ -12,7 +12,7 @@ import {
 import { useState, useMemo } from "react";
 import DisplayContent from "../../components/DisplayContent";
 import PredictionModal from "../../components/PredictionModal";
-import { createPridiction } from "../../lib/predictionUtils";
+import { createPridiction, updatePrediction } from "../../lib/predictionUtils";
 import AlertComponent from "../../components/Alert";
 import { checkAccess } from "../../lib/utils";
 
@@ -21,15 +21,6 @@ const Home = props => {
   const [predictions, setPredictions] = useState(props.predictions || []);
   const [alertResponse, setAlertResponse] = useState({});
   const [alertShow, setAlertShow] = useState(false);
-
-  const memoizedPrediction = useMemo(() => {
-    return (
-      predictions.length > 0 &&
-      predictions.map((prediction, i) => {
-        return <DisplayContent data={prediction} key={i} />;
-      })
-    );
-  }, [predictions]);
 
   const handleCreate = async data => {
     const createdData = await createPridiction(data);
@@ -57,6 +48,50 @@ const Home = props => {
     setAlertShow(true);
     setPredictions([createdData, ...predictions]);
   };
+
+  const handleEdit = async data => {
+    const editedData = await updatePrediction(data);
+    if (Object.entries(editedData).length === 0) {
+      setAlertResponse({
+        message: {
+          header: "ERROR",
+          body: "Failed to update data, did you select all fields"
+        },
+        variant: "danger"
+      });
+      setAlertShow(true);
+      return;
+    }
+    setAlertResponse({
+      message: {
+        header: "SUCCESS",
+        body: "Updated successfully"
+      },
+      variant: "success"
+    });
+    setAlertShow(true);
+
+    const indexOfEditedData = predictions.findIndex(
+      prediction => +prediction.id === +editedData.id
+    );
+
+    const tempPredictions = [...predictions];
+    tempPredictions.splice(indexOfEditedData, 1, editedData);
+
+    setPredictions([...tempPredictions]);
+  };
+
+  const memoizedPrediction = useMemo(() => {
+    return (
+      predictions.length > 0 &&
+      predictions.map((prediction, i) => {
+        return (
+          <DisplayContent data={prediction} key={i} callBack={handleEdit} />
+        );
+      })
+    );
+  }, [predictions]);
+
   return (
     <>
       <Navbar bg="primary" expand="lg" className="mb-40">
@@ -140,6 +175,7 @@ export async function getServerSideProps(context) {
     });
 
     predictions = predictions.status === 200 ? await predictions.json() : [];
+    predictions = predictions.sort((a, b) => a.id - b.id);
   } catch (e) {
     console.log(e);
   }

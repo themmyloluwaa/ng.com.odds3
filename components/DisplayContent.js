@@ -116,7 +116,11 @@ const DisplayContent = props => {
       <Col sm="12" className="border-bottom my-3 py-3">
         <Row className="mx-auto">
           <Col>
-            <PredictionModal defaultData={data} isEdit={true} />
+            <PredictionModal
+              defaultData={data}
+              isEdit={true}
+              callBack={props.callBack}
+            />
           </Col>
           <Col>
             <button className="btn btn-danger">Delete</button>

@@ -14,6 +14,7 @@ import DisplayContent from "../../components/DisplayContent";
 import PredictionModal from "../../components/PredictionModal";
 import { createPridiction } from "../../lib/predictionUtils";
 import AlertComponent from "../../components/Alert";
+import { checkAccess } from "../../lib/utils";
 
 const Home = props => {
   const [key, setKey] = useState("Prediction");
@@ -125,8 +126,9 @@ const Home = props => {
   );
 };
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   let predictions;
+  checkAccess(context, "/admin/home");
 
   try {
     predictions = await fetch(`${process.env.DEV_API}/prediction`, {
@@ -136,8 +138,6 @@ export async function getStaticProps(context) {
         "Content-Type": "application/json"
       }
     });
-
-    console.log(predictions);
 
     predictions = predictions.status === 200 ? await predictions.json() : [];
   } catch (e) {

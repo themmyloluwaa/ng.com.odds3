@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, Container, Row, Col, Image, Button } from "react-bootstrap";
 import Layout from "../../components/Layout";
-import { handleLogin } from "../../lib/utils";
+import { handleLogin, checkAccess } from "../../lib/utils";
 import Alert from "../../components/Alert";
 import cookie from "js-cookie";
 import { useRouter } from "next/router";
@@ -190,5 +190,12 @@ const Login = props => {
     </Layout>
   );
 };
+
+export async function getServerSideProps(ctx) {
+  checkAccess(ctx, "/admin");
+  return {
+    props: {} // will be passed to the page component as props
+  };
+}
 
 export default Login;

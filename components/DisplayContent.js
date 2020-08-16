@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Row, Col } from "react-bootstrap";
-import PredictionModal from "./PredictionModal";
 
 const renderIcon = (icon = "PAUSE") => {
   if (icon === "PAUSE") {
@@ -115,13 +114,7 @@ const DisplayContent = props => {
       </Col>
       <Col sm="12" className="border-bottom my-3 py-3">
         <Row className="mx-auto">
-          <Col>
-            <PredictionModal
-              defaultData={data}
-              isEdit={true}
-              callBack={props.callBack}
-            />
-          </Col>
+          <Col>{props.editButton}</Col>
           <Col>
             <button className="btn btn-danger">Delete</button>
           </Col>

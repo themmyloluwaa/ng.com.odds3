@@ -19,10 +19,11 @@ import { checkAccess } from "../../lib/utils";
 const Home = props => {
   const [key, setKey] = useState("Prediction");
   const [predictions, setPredictions] = useState(props.predictions || []);
+  const [results, setResults] = useState(props.results || []);
   const [alertResponse, setAlertResponse] = useState({});
   const [alertShow, setAlertShow] = useState(false);
 
-  const handleCreate = async data => {
+  const handlePredictionCreate = async data => {
     const createdData = await createPridiction(data);
     console.log(createdData);
 
@@ -49,7 +50,7 @@ const Home = props => {
     setPredictions([createdData, ...predictions]);
   };
 
-  const handleEdit = async data => {
+  const handlePredictionEdit = async data => {
     const editedData = await updatePrediction(data);
     if (Object.entries(editedData).length === 0) {
       setAlertResponse({
@@ -86,11 +87,37 @@ const Home = props => {
       predictions.length > 0 &&
       predictions.map((prediction, i) => {
         return (
-          <DisplayContent data={prediction} key={i} callBack={handleEdit} />
+          <DisplayContent
+            data={prediction}
+            editButton={
+              <PredictionModal
+                defaultData={prediction}
+                isEdit={true}
+                callBack={handlePredictionEdit}
+              />
+            }
+            key={i}
+            callBack={handlePredictionEdit}
+          />
         );
       })
     );
   }, [predictions]);
+
+  const memoizedResult = useMemo(() => {
+    return (
+      results.length > 0 &&
+      results.map((result, i) => {
+        return (
+          <DisplayContent
+            data={result}
+            key={i}
+            callBack={handlePredictionEdit}
+          />
+        );
+      })
+    );
+  }, [results]);
 
   return (
     <>
@@ -123,7 +150,13 @@ const Home = props => {
             <Tab eventKey="Prediction" title="Prediction">
               <Row>
                 <Col>
-                  <PredictionModal callBack={handleCreate} isEdit={false} />
+                  <PredictionModal
+                    callBack={handlePredictionCreate}
+                    isEdit={false}
+                  />
+                  <button className="btn btn-danger float-right mx-2">
+                    Delete All Prediction
+                  </button>
                 </Col>
               </Row>
               {alertShow && (
@@ -141,7 +174,7 @@ const Home = props => {
               <TabContent className="my-10 ">{memoizedPrediction}</TabContent>
             </Tab>
             <Tab eventKey="Result" title="Result">
-              <DisplayContent data={props.predictions} />
+              <TabContent className="my-10 ">{memoizedResult}</TabContent>
             </Tab>
             {/* <Tab eventKey="Code" title="Code">
               <DisplayContent />
@@ -162,7 +195,7 @@ const Home = props => {
 };
 
 export async function getServerSideProps(context) {
-  let predictions;
+  let predictions, results;
   checkAccess(context, "/admin/home");
 
   try {
@@ -176,12 +209,23 @@ export async function getServerSideProps(context) {
 
     predictions = predictions.status === 200 ? await predictions.json() : [];
     predictions = predictions.sort((a, b) => a.id - b.id);
+
+    results = await fetch(`${process.env.DEV_API}/result`, {
+      method: "get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    results = results.status === 200 ? await results.json() : [];
+    results = results.sort((a, b) => a.id - b.id);
   } catch (e) {
     console.log(e);
   }
   return {
     props: {
-      predictions
+      predictions,
+      results
     } // will be passed to the page component as props
   };
 }

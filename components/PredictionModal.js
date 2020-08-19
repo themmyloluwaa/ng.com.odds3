@@ -31,6 +31,8 @@ const PredictionModal = props => {
   const [leagueData, setLeagueData] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState({});
   const [alertResponse, setAlertResponse] = useState({});
+  const [validated, setValidated] = useState(false);
+  const [dataItems, setDataItems] = useState(defaultData);
 
   const handleClose = () => setShow(false);
   const handleShow = async () => {
@@ -39,8 +41,6 @@ const PredictionModal = props => {
     setLeagueData(response.api.leagues);
     setShow(true);
   };
-
-  const [dataItems, setDataItems] = useState(defaultData);
 
   const selectItems = useMemo(() => {
     return (
@@ -75,8 +75,6 @@ const PredictionModal = props => {
       time: `${newDate.getHours()}:${newDate.getMinutes()}`
     });
   };
-
-  const [validated, setValidated] = useState(false);
 
   const handleSubmit = async event => {
     const form = event.currentTarget;

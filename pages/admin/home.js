@@ -15,6 +15,7 @@ import PredictionModal from "../../components/PredictionModal";
 import { createPridiction, updatePrediction } from "../../lib/predictionUtils";
 import AlertComponent from "../../components/Alert";
 import { checkAccess } from "../../lib/utils";
+import NewResultModal from "../../components/NewResultModal";
 
 const Home = props => {
   const [key, setKey] = useState("Prediction");
@@ -155,7 +156,7 @@ const Home = props => {
                     isEdit={false}
                   />
                   <button className="btn btn-danger float-right mx-2">
-                    Delete All Prediction
+                    Delete All Result
                   </button>
                 </Col>
               </Row>
@@ -174,6 +175,14 @@ const Home = props => {
               <TabContent className="my-10 ">{memoizedPrediction}</TabContent>
             </Tab>
             <Tab eventKey="Result" title="Result">
+              <Row>
+                <Col>
+                  <NewResultModal isEdit={false} defaultData={predictions} />
+                  <button className="btn btn-danger float-right mx-2">
+                    Delete All Prediction
+                  </button>
+                </Col>
+              </Row>
               <TabContent className="my-10 ">{memoizedResult}</TabContent>
             </Tab>
             {/* <Tab eventKey="Code" title="Code">

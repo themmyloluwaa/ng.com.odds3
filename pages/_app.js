@@ -2,9 +2,9 @@ import App from "next/app";
 // import NProgress from "nprogress";
 // import Router from "next/router";
 
-import "bootstrap/dist/css/bootstrap.min.css";
 import "../public/sass/main.scss";
 import "react-widgets/dist/css/react-widgets.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 // import "nprogress/nprogress.css";
 
 // Router.events.on("routeChangeStart", url => {

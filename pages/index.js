@@ -12,10 +12,14 @@ const LandingPage = () => {
           </div>
           <ul className="flex flex-row justify-around text-white">
             <li className="nav-child px-4">
-              <a href="#about">About</a>
+              <a style={{ color: "#fff !important" }} href="#about">
+                About
+              </a>
             </li>
             <li className="nav-child px-4">
-              <a href="#contact">Contact</a>
+              <a style={{ color: "#fff !important" }} href="#contact">
+                Contact
+              </a>
             </li>
           </ul>
         </nav>
@@ -27,7 +31,7 @@ const LandingPage = () => {
               Small Games, Bigger Profits
             </span>
           </h1>
-          <a href="#download" className="bt btn-animated">
+          <a href="#download" className="bt btn-animateds">
             Download
           </a>
         </section>
@@ -48,7 +52,7 @@ const LandingPage = () => {
               <h3 className="heading-tertiary u-margin-bottom-small">
                 Cross Platform Odd Suggestion App
               </h3>
-              <p>
+              <p style={{ fontSize: "16px" }}>
                 Odds 3 is a bet suggestion mobile application that supplies
                 carefully analysed 3 odds with 99% success rate. We believe in
                 less game more win strategy and we strive to provide nothing but
@@ -94,7 +98,9 @@ const LandingPage = () => {
         </section>
       </main>
       <footer id="contact" className="footer text-center my-5 py-5">
-        <p className="mb-5">Developed by {"< CodeKagei />"} ☕☕☕</p>
+        <p className="mb-5" style={{ fontSize: "16px" }}>
+          Developed by {"< CodeKagei />"} ☕☕☕
+        </p>
         <div className="flex flex-row justify-center cursor-pointer">
           <a
             className="mr-5"
@@ -122,7 +128,7 @@ const LandingPage = () => {
             <h3 className="heading-tertiary mt-10 mb-12 border-b-2 pb-3">
               Coming Soon
             </h3>
-            <p>
+            <p style={{ fontSize: "16px" }}>
               We are working hard to ensure that our app is available on the
               apple store. Please be patient with us while we work on this. For
               now you can use the web version that would be released soon.

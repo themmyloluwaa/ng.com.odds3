@@ -20,13 +20,13 @@ import {
 } from "../../lib/predictionUtils";
 import {
   createResult,
-  deleteAllResult,
   deleteResult,
   updateResult
 } from "../../lib/resultUtils";
 import AlertComponent from "../../components/Alert";
 import { checkAccess } from "../../lib/utils";
 import NewResultModal from "../../components/NewResultModal";
+import EditResultModal from "../../components/EditResultModal";
 
 const Home = props => {
   const [key, setKey] = useState("Result");
@@ -199,6 +199,38 @@ const Home = props => {
     }
   };
 
+  const handleResultEdit = async data => {
+    const editedData = await updateResult(data);
+    if (Object.entries(editedData).length === 0) {
+      setAlertResponse({
+        message: {
+          header: "ERROR",
+          body: "Failed to update data, did you select all fields"
+        },
+        variant: "danger"
+      });
+      setAlertShow(true);
+      return;
+    }
+    setAlertResponse({
+      message: {
+        header: "SUCCESS",
+        body: "Updated successfully"
+      },
+      variant: "success"
+    });
+    setAlertShow(true);
+
+    const indexOfEditedData = results.findIndex(
+      result => Number(result.id) === Number(editedData.id)
+    );
+
+    const tempResults = [...results];
+    tempResults.splice(indexOfEditedData, 1, editedData);
+
+    setResults([...tempResults]);
+  };
+
   const memoizedPrediction = useMemo(() => {
     return (
       predictions.length > 0 &&
@@ -230,6 +262,12 @@ const Home = props => {
           <DisplayContent
             data={result}
             key={i}
+            editButton={
+              <EditResultModal
+                defaultData={result}
+                callBack={handleResultEdit}
+              />
+            }
             handleDelete={handleResultDelete}
             callBack={handlePredictionEdit}
           />

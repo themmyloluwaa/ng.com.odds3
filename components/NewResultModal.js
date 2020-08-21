@@ -10,7 +10,6 @@ const NewResultModal = props => {
   const [finalData, setFinalData] = useState([]);
   const [tempData, setTempData] = useState([]);
   const [validated, setValidated] = useState(false);
-  const [dataItems, setDataItems] = useState(defaultData);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -21,13 +20,6 @@ const NewResultModal = props => {
     }
   }, [tempData]);
 
-  // useEffect(() => {
-  //   // console.log(finalData);
-  //   const isIncluded = finalData.findIndex(fd => fd.id === tempData.id);
-  //   if (isIncluded === -1) {
-  //     setIsDisabled(false);
-  //   }
-  // }, [tempData]);
   const onPredictionSelect = id => {
     const valueToTemp = defaultData.find(ids => +ids.id === +id);
 

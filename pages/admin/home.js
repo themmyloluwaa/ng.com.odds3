@@ -419,7 +419,7 @@ export async function getServerSideProps(context) {
   checkAccess(context, "/admin/home");
 
   try {
-    predictions = await fetch(`${process.env.DEV_API}/prediction`, {
+    predictions = await fetch(`${process.env.API_URL}/prediction`, {
       method: "get",
       headers: {
         Accept: "application/json",
@@ -430,7 +430,7 @@ export async function getServerSideProps(context) {
     predictions = predictions.status === 200 ? await predictions.json() : [];
     predictions = predictions.sort((a, b) => a.id - b.id);
 
-    results = await fetch(`${process.env.DEV_API}/result`, {
+    results = await fetch(`${process.env.API_URL}/result`, {
       method: "get",
       headers: {
         Accept: "application/json",

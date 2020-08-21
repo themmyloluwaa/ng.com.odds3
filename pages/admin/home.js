@@ -9,10 +9,21 @@ import {
   Tab,
   TabContent
 } from "react-bootstrap";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import DisplayContent from "../../components/DisplayContent";
 import PredictionModal from "../../components/PredictionModal";
-import { createPridiction, updatePrediction } from "../../lib/predictionUtils";
+import {
+  createPridiction,
+  updatePrediction,
+  deleteAllPrediction,
+  deletePrediction
+} from "../../lib/predictionUtils";
+import {
+  createResult,
+  deleteAllResult,
+  deleteResult,
+  updateResult
+} from "../../lib/resultUtils";
 import AlertComponent from "../../components/Alert";
 import { checkAccess } from "../../lib/utils";
 import NewResultModal from "../../components/NewResultModal";
@@ -26,7 +37,6 @@ const Home = props => {
 
   const handlePredictionCreate = async data => {
     const createdData = await createPridiction(data);
-    console.log(createdData);
 
     if (Object.entries(createdData).length === 0) {
       setAlertResponse({
@@ -83,6 +93,79 @@ const Home = props => {
     setPredictions([...tempPredictions]);
   };
 
+  const handlePredictionDelete = async id => {
+    const alertResponse = confirm("Are you sure you want to delete ?");
+
+    if (alertResponse) {
+      let deletedPrediction = await deletePrediction(id);
+      if (Object.entries(deletedPrediction).length === 0) {
+        const filteredOutDeletedPredictions = predictions.filter(
+          predVar => Number(predVar.id) !== Number(id)
+        );
+
+        setAlertResponse({
+          message: {
+            header: "SUCCESS",
+            body: "Deleted successfully"
+          },
+          variant: "success"
+        });
+        setAlertShow(true);
+
+        return setPredictions([...filteredOutDeletedPredictions]);
+      } else {
+        setAlertResponse({
+          message: {
+            header: "FAILED",
+            body: "Failed to delete prediction"
+          },
+          variant: "danger"
+        });
+        return setAlertShow(true);
+      }
+    }
+  };
+
+  const handleResultCreate = async data => {
+    data.forEach(resVar => delete resVar.id);
+    const createdData = await createResult(data);
+
+    // if(data.length !== predictions.length) {
+    //   setAlertResponse({
+    //     message: {
+    //       header: "ERROR",
+    //       body:
+    //         "You must update all the predictions before creating."
+    //     },
+    //     variant: "danger"
+    //   });
+    //   setAlertShow(true);
+    //   return;
+    // }
+
+    if (Object.entries(createdData).length === 0) {
+      setAlertResponse({
+        message: {
+          header: "ERROR",
+          body:
+            "Failed to create data, did you put the home, away and tip for all the predictions"
+        },
+        variant: "danger"
+      });
+      setAlertShow(true);
+      return;
+    }
+    setAlertResponse({
+      message: {
+        header: "SUCCESS",
+        body: "Created successfully"
+      },
+      variant: "success"
+    });
+    setAlertShow(true);
+    setResults([...createdData]);
+  };
+
   const memoizedPrediction = useMemo(() => {
     return (
       predictions.length > 0 &&
@@ -97,6 +180,7 @@ const Home = props => {
                 callBack={handlePredictionEdit}
               />
             }
+            handleDelete={handlePredictionDelete}
             key={i}
             callBack={handlePredictionEdit}
           />
@@ -156,7 +240,7 @@ const Home = props => {
                     isEdit={false}
                   />
                   <button className="btn btn-danger float-right mx-2">
-                    Delete All Result
+                    Delete All Prediction
                   </button>
                 </Col>
               </Row>
@@ -180,10 +264,8 @@ const Home = props => {
                   <NewResultModal
                     isEdit={false}
                     defaultData={props.resultsTobeAdded}
+                    callBack={handleResultCreate}
                   />
-                  <button className="btn btn-danger float-right mx-2">
-                    Delete All Prediction
-                  </button>
                 </Col>
               </Row>
               <TabContent className="my-10 ">{memoizedResult}</TabContent>

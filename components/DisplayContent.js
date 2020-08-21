@@ -116,7 +116,12 @@ const DisplayContent = props => {
         <Row className="mx-auto">
           <Col>{props.editButton}</Col>
           <Col>
-            <button className="btn btn-danger">Delete</button>
+            <button
+              className="btn btn-danger"
+              onClick={async () => await props.handleDelete(data.id)}
+            >
+              Delete
+            </button>
           </Col>
         </Row>
       </Col>

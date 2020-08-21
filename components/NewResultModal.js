@@ -47,18 +47,13 @@ const NewResultModal = props => {
     event.preventDefault();
     if (
       form.checkValidity() === false ||
-      !dataItems.hasOwnProperty("league") ||
-      !dataItems.hasOwnProperty("date") ||
-      !dataItems.hasOwnProperty("logo") ||
-      !dataItems.hasOwnProperty("time")
+      finalData.length !== defaultData.length
     ) {
       event.stopPropagation();
       setAlertResponse({
         message: {
           header: "ERROR",
-          body: `Failed to ${
-            isEdit ? "update" : "create"
-          } data, did you select a date, time, or the league name`
+          body: `Failed to Create results. Select all predictions to be created`
         },
         variant: "danger"
       });
@@ -66,14 +61,8 @@ const NewResultModal = props => {
     }
     setValidated(true);
 
-    if (
-      form.checkValidity() &&
-      dataItems.hasOwnProperty("league") &&
-      dataItems.hasOwnProperty("date") &&
-      dataItems.hasOwnProperty("logo") &&
-      dataItems.hasOwnProperty("time")
-    ) {
-      await props.callBack(dataItems);
+    if (form.checkValidity() && finalData.length === defaultData.length) {
+      await props.callBack(finalData);
       handleClose();
     }
   };
@@ -158,7 +147,7 @@ const NewResultModal = props => {
                 <Form.Group>
                   <Form.Label>Home Score</Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
                     name="home_goal"
                     // defaultValue={data?.home_goal ?? ""}
                     onChange={e => handleChange(e)}
@@ -168,7 +157,7 @@ const NewResultModal = props => {
                 <Form.Group>
                   <Form.Label>Away Score</Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
                     name="opponent_goal"
                     // defaultValue={data?.opponent_goal ?? ""}
                     onChange={e => handleChange(e)}

@@ -33,8 +33,6 @@ const Login = props => {
       };
       const auth = await handleLogin(data);
 
-      console.log(auth);
-
       if (Object.entries(auth).length === 0) {
         setResponse({
           message: {

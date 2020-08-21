@@ -26,7 +26,6 @@ const EditResultModal = props => {
     handleClose();
   };
 
-  console.log(editData);
   return (
     <>
       <button

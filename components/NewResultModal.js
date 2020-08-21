@@ -14,7 +14,6 @@ const NewResultModal = props => {
   const handleShow = () => setShow(true);
 
   useEffect(() => {
-    // console.log(finalData);
     if (defaultData.length === finalData.length) {
       setIsDisabled(false);
     }
@@ -123,8 +122,6 @@ const NewResultModal = props => {
                   const doesFinalDataInclude = finalData.findIndex(
                     fd => fd.id === prediction.id
                   );
-
-                  console.log(doesFinalDataInclude);
 
                   return (
                     <option value={prediction.id} key={i}>

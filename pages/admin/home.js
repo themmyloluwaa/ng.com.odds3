@@ -25,10 +25,10 @@ import {
   deleteAllResult
 } from "../../lib/resultUtils";
 import AlertComponent from "../../components/Alert";
-import { checkAccess } from "../../lib/utils";
+import { checkAccess, handleLogout } from "../../lib/utils";
 import NewResultModal from "../../components/NewResultModal";
 import EditResultModal from "../../components/EditResultModal";
-
+import Router from "next/router";
 const Home = props => {
   const [key, setKey] = useState("Result");
   const [predictions, setPredictions] = useState(props.predictions || []);
@@ -319,7 +319,13 @@ const Home = props => {
           />
         </Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="#home" className="text-white">
+          <Nav.Link
+            className="text-white"
+            onClick={() => {
+              handleLogout();
+              Router.reload();
+            }}
+          >
             Logout
           </Nav.Link>
         </Nav>

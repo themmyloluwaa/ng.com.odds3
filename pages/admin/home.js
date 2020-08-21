@@ -21,7 +21,8 @@ import {
 import {
   createResult,
   deleteResult,
-  updateResult
+  updateResult,
+  deleteAllResult
 } from "../../lib/resultUtils";
 import AlertComponent from "../../components/Alert";
 import { checkAccess } from "../../lib/utils";
@@ -230,7 +231,36 @@ const Home = props => {
 
     setResults([...tempResults]);
   };
+  const handleDeleteAllPredictions = async e => {
+    const alertResponse = confirm(
+      "Are you sure you want to delete all the predictions?"
+    );
 
+    if (alertResponse) {
+      let deletePredictions = await deleteAllPrediction();
+      if (Object.entries(deletePredictions).length === 0) {
+        setAlertResponse({
+          message: {
+            header: "SUCCESS",
+            body: "Deleted all successfully"
+          },
+          variant: "success"
+        });
+        setAlertShow(true);
+
+        return setPredictions([]);
+      } else {
+        setAlertResponse({
+          message: {
+            header: "FAILED",
+            body: "Failed to delete all  predictions"
+          },
+          variant: "danger"
+        });
+        return setAlertShow(true);
+      }
+    }
+  };
   const memoizedPrediction = useMemo(() => {
     return (
       predictions.length > 0 &&
@@ -311,9 +341,14 @@ const Home = props => {
                     callBack={handlePredictionCreate}
                     isEdit={false}
                   />
-                  <button className="btn btn-danger float-right mx-2">
-                    Delete All Prediction
-                  </button>
+                  {predictions.length > 0 && (
+                    <button
+                      className="btn btn-danger float-right mx-2"
+                      onClick={async e => await handleDeleteAllPredictions()}
+                    >
+                      Delete All Prediction
+                    </button>
+                  )}
                 </Col>
               </Row>
               {alertShow && (

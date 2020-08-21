@@ -63,6 +63,7 @@ const NewResultModal = props => {
 
     if (form.checkValidity() && finalData.length === defaultData.length) {
       await props.callBack(finalData);
+      setFinalData([]);
       handleClose();
     }
   };

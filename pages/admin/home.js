@@ -166,6 +166,39 @@ const Home = props => {
     setResults([...createdData]);
   };
 
+  const handleResultDelete = async id => {
+    const alertResponse = confirm("Are you sure you want to delete ?");
+
+    if (alertResponse) {
+      let deletedResults = await deleteResult(id);
+      if (Object.entries(deletedResults).length === 0) {
+        const filteredOutDeletedResults = results.filter(
+          resVar => Number(resVar.id) !== Number(id)
+        );
+
+        setAlertResponse({
+          message: {
+            header: "SUCCESS",
+            body: "Deleted successfully"
+          },
+          variant: "success"
+        });
+        setAlertShow(true);
+
+        return setResults([...filteredOutDeletedResults]);
+      } else {
+        setAlertResponse({
+          message: {
+            header: "FAILED",
+            body: "Failed to delete result"
+          },
+          variant: "danger"
+        });
+        return setAlertShow(true);
+      }
+    }
+  };
+
   const memoizedPrediction = useMemo(() => {
     return (
       predictions.length > 0 &&
@@ -197,6 +230,7 @@ const Home = props => {
           <DisplayContent
             data={result}
             key={i}
+            handleDelete={handleResultDelete}
             callBack={handlePredictionEdit}
           />
         );
@@ -268,6 +302,17 @@ const Home = props => {
                   />
                 </Col>
               </Row>
+              {alertShow && (
+                <Row>
+                  <Col>
+                    <AlertComponent
+                      data={[alertShow, setAlertShow]}
+                      message={alertResponse.message}
+                      variant={alertResponse.variant}
+                    />
+                  </Col>
+                </Row>
+              )}
               <TabContent className="my-10 ">{memoizedResult}</TabContent>
             </Tab>
             {/* <Tab eventKey="Code" title="Code">

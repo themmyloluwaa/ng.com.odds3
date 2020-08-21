@@ -18,7 +18,7 @@ import { checkAccess } from "../../lib/utils";
 import NewResultModal from "../../components/NewResultModal";
 
 const Home = props => {
-  const [key, setKey] = useState("Prediction");
+  const [key, setKey] = useState("Result");
   const [predictions, setPredictions] = useState(props.predictions || []);
   const [results, setResults] = useState(props.results || []);
   const [alertResponse, setAlertResponse] = useState({});
@@ -177,7 +177,10 @@ const Home = props => {
             <Tab eventKey="Result" title="Result">
               <Row>
                 <Col>
-                  <NewResultModal isEdit={false} defaultData={predictions} />
+                  <NewResultModal
+                    isEdit={false}
+                    defaultData={props.resultsTobeAdded}
+                  />
                   <button className="btn btn-danger float-right mx-2">
                     Delete All Prediction
                   </button>
@@ -204,7 +207,9 @@ const Home = props => {
 };
 
 export async function getServerSideProps(context) {
-  let predictions, results;
+  let predictions,
+    results,
+    resultsTobeAdded = [];
   checkAccess(context, "/admin/home");
 
   try {
@@ -228,13 +233,22 @@ export async function getServerSideProps(context) {
     });
     results = results.status === 200 ? await results.json() : [];
     results = results.sort((a, b) => a.id - b.id);
+
+    if (predictions.length > 0) {
+      resultsTobeAdded = [...predictions];
+      resultsTobeAdded.forEach(predVar => {
+        delete predVar.created_at;
+        delete predVar.updated_at;
+      });
+    }
   } catch (e) {
     console.log(e);
   }
   return {
     props: {
       predictions,
-      results
+      results,
+      resultsTobeAdded
     } // will be passed to the page component as props
   };
 }

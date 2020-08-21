@@ -262,8 +262,7 @@ const Home = props => {
     }
   };
   const memoizedPrediction = useMemo(() => {
-    return (
-      predictions.length > 0 &&
+    return predictions.length > 0 ? (
       predictions.map((prediction, i) => {
         return (
           <DisplayContent
@@ -281,12 +280,13 @@ const Home = props => {
           />
         );
       })
+    ) : (
+      <div>No Predictions available</div>
     );
   }, [predictions]);
 
   const memoizedResult = useMemo(() => {
-    return (
-      results.length > 0 &&
+    return results.length > 0 ? (
       results.map((result, i) => {
         return (
           <DisplayContent
@@ -303,6 +303,8 @@ const Home = props => {
           />
         );
       })
+    ) : (
+      <div>No Results available</div>
     );
   }, [results]);
 
@@ -341,7 +343,7 @@ const Home = props => {
         <Card>
           <Tabs activeKey={key} onSelect={k => setKey(k)}>
             <Tab eventKey="Prediction" title="Prediction">
-              <Row>
+              <Row className="mt-5">
                 <Col>
                   <PredictionModal
                     callBack={handlePredictionCreate}
@@ -372,7 +374,7 @@ const Home = props => {
               <TabContent className="my-10 ">{memoizedPrediction}</TabContent>
             </Tab>
             <Tab eventKey="Result" title="Result">
-              <Row>
+              <Row className="mt-5">
                 <Col>
                   <NewResultModal
                     isEdit={false}

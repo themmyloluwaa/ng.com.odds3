@@ -138,7 +138,9 @@ const PredictionModal = props => {
     setDataItems({
       ...dataItems,
       date: `${month} ${newDate.getDate()}`,
-      time: `${newDate.getHours()}:${newDate.getMinutes()}`
+      time: `${newDate.getHours()}:${
+        newDate.getMinutes() === 0 ? "00" : newDate.getMinutes()
+      }`
     });
   };
 
@@ -213,7 +215,7 @@ const PredictionModal = props => {
           <Modal.Body>
             <fieldset>
               <Form.Group>
-                <Form.Label>League Name</Form.Label>
+                <Form.Label>Select League</Form.Label>
                 <Dropdown>
                   <Dropdown.Toggle
                     as={CustomToggle}
@@ -224,14 +226,13 @@ const PredictionModal = props => {
 
                   <Dropdown.Menu as={CustomMenu}>{selectItems}</Dropdown.Menu>
                 </Dropdown>
-                ,
                 <Form.Text>
-                  Click to drop down to see all available leagues in the world
+                  Click the drop down to see all available leagues in the world
                 </Form.Text>
               </Form.Group>
               {selectedLeague.hasOwnProperty("league_id") && (
                 <Form.Group>
-                  <Form.Label>Home</Form.Label>
+                  <Form.Label>League Name</Form.Label>
                   <Form.Control
                     type="text"
                     value={`${selectedLeague.country}-${selectedLeague.name}`}

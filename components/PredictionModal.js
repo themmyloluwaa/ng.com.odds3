@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Modal, Form, Button } from "react-bootstrap";
+import { Modal, Form, Dropdown } from "react-bootstrap";
 
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
@@ -24,6 +24,49 @@ const MONTHS = [
   "DEC"
 ];
 
+const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  <select
+    href=""
+    ref={ref}
+    className="form-control"
+    onClick={e => {
+      e.preventDefault();
+      onClick(e);
+    }}
+  >
+    {children}
+    &#x25bc;
+  </select>
+));
+
+const CustomMenu = React.forwardRef(
+  ({ children, style, className, "aria-labelledby": labeledBy }, ref) => {
+    const [value, setValue] = useState("");
+    return (
+      <div
+        ref={ref}
+        style={style}
+        className={className}
+        aria-labelledby={labeledBy}
+      >
+        <Form.Control
+          autoFocus
+          className="mx-3 my-2 w-auto"
+          placeholder="Type to filter..."
+          onChange={e => setValue(e.target.value)}
+          value={value}
+        />
+        <ul className="list-unstyled">
+          {React.Children.toArray(children).filter(
+            child =>
+              !value || child.props.children.toLowerCase().startsWith(value)
+          )}
+        </ul>
+      </div>
+    );
+  }
+);
+
 const PredictionModal = props => {
   const { defaultData = {}, isEdit = false } = props;
   const [alertShow, setAlertShow] = useState(false);
@@ -47,9 +90,32 @@ const PredictionModal = props => {
       leagueData.length > 0 &&
       leagueData.map((league, i) => {
         return (
-          <option key={i} value={JSON.stringify(league)}>
+          <Dropdown.Item
+            eventKey={league.league_id}
+            key={i}
+            active={
+              Number(selectedLeague.league_id) === Number(league.league_id)
+                ? true
+                : false
+            }
+            onSelect={e => {
+              const findLeague = leagueData.find(
+                lgeVar => Number(lgeVar.league_id) === Number(e)
+              );
+              setSelectedLeague(findLeague);
+
+              setDataItems({
+                ...dataItems,
+                league: `${findLeague.country} ${findLeague.name}`,
+                logo: findLeague.logo,
+                opponent_goal: "?",
+                home_goal: "?",
+                icon: "PAUSE"
+              });
+            }}
+          >
             {`${league.country}-${league.name}`}
-          </option>
+          </Dropdown.Item>
         );
       })
     );
@@ -148,36 +214,34 @@ const PredictionModal = props => {
             <fieldset>
               <Form.Group>
                 <Form.Label>League Name</Form.Label>
-                <Form.Control
-                  as="select"
-                  defaultValue={defaultData?.league ?? ""}
-                  required
-                  onChange={e => {
-                    const leagueItem = JSON.parse(e.target.value);
-                    setSelectedLeague(leagueItem);
+                <Dropdown>
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    id="dropdown-custom-components"
+                  >
+                    Custom toggle
+                  </Dropdown.Toggle>
 
-                    setDataItems({
-                      ...dataItems,
-                      league: `${leagueItem.country} ${leagueItem.name}`,
-                      logo: leagueItem.logo,
-                      opponent_goal: "?",
-                      home_goal: "?",
-                      icon: "PAUSE"
-                    });
-                  }}
-                >
-                  <option>...</option>
-                  {selectItems}
-                </Form.Control>
+                  <Dropdown.Menu as={CustomMenu}>{selectItems}</Dropdown.Menu>
+                </Dropdown>
+                ,
                 <Form.Text>
                   Click to drop down to see all available leagues in the world
                 </Form.Text>
               </Form.Group>
-
+              {selectedLeague.hasOwnProperty("league_id") && (
+                <Form.Group>
+                  <Form.Label>Home</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={`${selectedLeague.country}-${selectedLeague.name}`}
+                    disabled={true}
+                  />
+                </Form.Group>
+              )}
               <Form.Group>
                 <Form.Label>
                   Date and Time
-                  {/* <DateTimePicker onChange={onChange} value={value} /> */}
                   <DateTimePicker
                     name="date"
                     defaultValue={
